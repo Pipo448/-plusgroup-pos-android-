@@ -17,7 +17,7 @@ import android.util.Log;
 public class MainActivity extends Activity {
 
     private static final String TAG     = "PlusGroupPOS";
-    private static final String APP_URL = "https://app.plusgroupe.com";
+    private static final String APP_URL = "https://app.plusgroupe.com/login";
 
     private WebView             webView;
     private SunmiPrinterManager printer;
@@ -33,44 +33,53 @@ public class MainActivity extends Activity {
 
         webView = findViewById(R.id.webview);
         WebSettings settings = webView.getSettings();
+
+        // ── Fonksyonalite debaz
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+
+        // ── Optimizasyon pou aparèy fèb (Sunmi V2)
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+        settings.setEnableSmoothTransition(false);
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
-        settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        settings.setMediaPlaybackRequiresUserGesture(true);
+        settings.setLoadsImagesAutomatically(true);
+        settings.setBlockNetworkImage(false);
         settings.setUserAgentString(
             "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 Chrome/91.0 Mobile Safari/537.36"
         );
 
+        // ── JavaScript Bridge pou printer
         webView.addJavascriptInterface(new PrinterBridge(), "SunmiPrinter");
+        webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
 
         webView.setWebViewClient(new WebViewClient() {
-    @Override
-    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        // Kite WebView jere tout redirect otomatikman
-        return false;  // ← chanje true → false
-    }
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return false;
+            }
 
-    @Override
-    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        handler.proceed();
-    }
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
 
-    @Override
-    public void onPageFinished(WebView view, String url) {
-        Log.d(TAG, "Page chaje: " + url);
-    }
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Log.d(TAG, "Page chaje: " + url);
+            }
 
-    @Override
-    public void onReceivedError(WebView view, int errorCode, 
-                                 String description, String failingUrl) {
-        Log.e(TAG, "Erè: " + errorCode + " - " + description + " - " + failingUrl);
-    }
-});
+            @Override
+            public void onReceivedError(WebView view, int errorCode,
+                                         String description, String failingUrl) {
+                Log.e(TAG, "Erè: " + errorCode + " - " + description);
+            }
+        });
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -104,6 +113,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (webView != null) {
+            webView.clearCache(true);
+            webView.destroy();
+        }
         printer.disconnect();
     }
 
