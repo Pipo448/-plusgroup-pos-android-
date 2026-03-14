@@ -1,0 +1,37 @@
+// app/build.gradle
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.plusgroup.pos'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.plusgroup.pos"
+        minSdk        24   // Android 7 — Sunmi V2
+        targetSdk     34
+        versionCode   1
+        versionName   "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled   false
+            shrinkResources false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    // ✅ Sunmi Printer SDK — inner printer AIDL
+    implementation 'com.sunmi:printerlibrary:1.0.15'
+
+    // Standard Android
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+}
