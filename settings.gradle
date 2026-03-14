@@ -1,17 +1,7 @@
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://dl.bintray.com/sunmi/maven' }
+    maven { url 'https://raw.githubusercontent.com/sunmi-os/sunmi-peripheral-api/master/' }
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-    }
-}
-rootProject.name = "PlusGroupPOS"
-include ':app'
