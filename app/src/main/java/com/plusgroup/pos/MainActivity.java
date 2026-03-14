@@ -16,10 +16,10 @@ import android.util.Log;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG     = "PlusGroupPOS";
+    private static final String TAG = "PlusGroupPOS";
     private static final String APP_URL = "file:///android_asset/index.html";
 
-    private WebView             webView;
+    private WebView webView;
     private SunmiPrinterManager printer;
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
@@ -34,31 +34,41 @@ public class MainActivity extends Activity {
         webView = findViewById(R.id.webview);
         WebSettings settings = webView.getSettings();
 
-        // ── Fonksyonalite debaz
+        // ───────── Fonksyonalite debaz
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
 
-        // ── Optimizasyon pou aparèy fèb (Sunmi V2)
+        // ───────── Pèmèt WebView li fichye lokal React yo
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowUniversalAccessFromFileURLs(true);
+
+        // ───────── Optimizasyon pou POS (Sunmi V2)
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
-        settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-        settings.setEnableSmoothTransition(false);
-        settings.setBuiltInZoomControls(false);
-        settings.setDisplayZoomControls(false);
-        settings.setMediaPlaybackRequiresUserGesture(true);
         settings.setLoadsImagesAutomatically(true);
         settings.setBlockNetworkImage(false);
+
+        settings.setBuiltInZoomControls(false);
+        settings.setDisplayZoomControls(false);
+
+        settings.setMediaPlaybackRequiresUserGesture(false);
+
         settings.setUserAgentString(
-            "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 Chrome/91.0 Mobile Safari/537.36"
+                "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 Chrome/91.0 Mobile Safari/537.36"
         );
 
-        // ── JavaScript Bridge pou printer
+        // ───────── JavaScript Bridge pou printer
         webView.addJavascriptInterface(new PrinterBridge(), "SunmiPrinter");
+
         webView.setLayerType(WebView.LAYER_TYPE_HARDWARE, null);
 
         webView.setWebViewClient(new WebViewClient() {
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return false;
@@ -75,24 +85,26 @@ public class MainActivity extends Activity {
             }
 
             @Override
-            public void onReceivedError(WebView view, int errorCode,
-                                         String description, String failingUrl) {
-                Log.e(TAG, "Erè: " + errorCode + " - " + description);
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                Log.e(TAG, "WebView Erè: " + description + " URL: " + failingUrl);
             }
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage msg) {
-                Log.d(TAG, "JS: " + msg.message());
+                Log.d(TAG, "JS Console: " + msg.message());
                 return true;
             }
         });
 
+        // ───────── Chaje aplikasyon React la
         webView.loadUrl(APP_URL);
     }
 
+    // ───────── Bridge pou Sunmi printer
     public class PrinterBridge {
+
         @JavascriptInterface
         public void print(String base64Data) {
             try {
@@ -113,16 +125,18 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         if (webView != null) {
             webView.clearCache(true);
             webView.destroy();
         }
+
         printer.disconnect();
     }
 
     @Override
     public void onBackPressed() {
-        if (webView.canGoBack()) {
+        if (webView != null && webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
