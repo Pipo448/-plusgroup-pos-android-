@@ -22,6 +22,12 @@ jobs:
         with:
           gradle-version: '8.7'
 
+      - name: Enstale Pillow
+        run: pip install Pillow
+
+      - name: Jenere ikòn yo
+        run: python generate_icons.py
+
       - name: Build Debug APK
         run: gradle assembleDebug
 
