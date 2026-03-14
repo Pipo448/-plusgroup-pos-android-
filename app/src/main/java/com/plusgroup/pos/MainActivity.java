@@ -1,10 +1,11 @@
-// app/src/main/java/com/plusgroup/pos/MainActivity.java
 package com.plusgroup.pos;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,9 +17,9 @@ import android.util.Log;
 public class MainActivity extends Activity {
 
     private static final String TAG     = "PlusGroupPOS";
-    private static final String APP_URL = "file:///android_asset/index.html";
+    private static final String APP_URL = "https://app.plusgroupe.com";
 
-    private WebView            webView;
+    private WebView             webView;
     private SunmiPrinterManager printer;
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
@@ -27,11 +28,9 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ── Enstansye printer manager
         printer = new SunmiPrinterManager(this);
         printer.connect();
 
-        // ── Konfigire WebView
         webView = findViewById(R.id.webview);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -41,17 +40,29 @@ public class MainActivity extends Activity {
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
         settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        settings.setUserAgentString(
+            "Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 Chrome/91.0 Mobile Safari/537.36"
+        );
 
-        // ── Enjekte JavaScript bridge "SunmiPrinter"
-        // Nan app ou: window.SunmiPrinter.print(base64bytes)
         webView.addJavascriptInterface(new PrinterBridge(), "SunmiPrinter");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                // Rete nan menm WebView pou tout URL app la
                 view.loadUrl(url);
                 return true;
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                Log.d(TAG, "Page chaje: " + url);
             }
         });
 
@@ -66,11 +77,7 @@ public class MainActivity extends Activity {
         webView.loadUrl(APP_URL);
     }
 
-    // ── JavaScript Interface — rele depi React app la
     public class PrinterBridge {
-
-        // ✅ Resevwa bytes ESC/POS an base64 depi JavaScript
-        // Itilizasyon nan React: window.SunmiPrinter.print(base64string)
         @JavascriptInterface
         public void print(String base64Data) {
             try {
@@ -82,7 +89,6 @@ public class MainActivity extends Activity {
             }
         }
 
-        // ✅ Verifye si printer konekte — retounen "true"/"false"
         @JavascriptInterface
         public String isConnected() {
             return String.valueOf(printer.isConnected());
@@ -97,7 +103,6 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        // Bouton retou Android → navige tounen nan WebView
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
