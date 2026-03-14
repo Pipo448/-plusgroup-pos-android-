@@ -49,22 +49,28 @@ public class MainActivity extends Activity {
         webView.addJavascriptInterface(new PrinterBridge(), "SunmiPrinter");
 
         webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        // Kite WebView jere tout redirect otomatikman
+        return false;  // ← chanje true → false
+    }
 
-            @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                handler.proceed();
-            }
+    @Override
+    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        handler.proceed();
+    }
 
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                Log.d(TAG, "Page chaje: " + url);
-            }
-        });
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        Log.d(TAG, "Page chaje: " + url);
+    }
+
+    @Override
+    public void onReceivedError(WebView view, int errorCode, 
+                                 String description, String failingUrl) {
+        Log.e(TAG, "Erè: " + errorCode + " - " + description + " - " + failingUrl);
+    }
+});
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
