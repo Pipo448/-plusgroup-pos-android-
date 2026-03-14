@@ -16,7 +16,7 @@ import android.util.Log;
 public class MainActivity extends Activity {
 
     private static final String TAG     = "PlusGroupPOS";
-    private static final String APP_URL = "https://app.plusgroupe.com";
+    private static final String APP_URL = "file:///android_asset/index.html";
 
     private WebView            webView;
     private SunmiPrinterManager printer;
