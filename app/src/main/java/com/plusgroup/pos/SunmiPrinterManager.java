@@ -5,38 +5,38 @@ import android.util.Log;
 
 public class SunmiPrinterManager {
     private static final String TAG = "SunmiPrinter";
-    private static SunmiPrinterManager instance;
+    private Context context;
     private boolean connected = false;
 
-    public static SunmiPrinterManager getInstance() {
-        if (instance == null) instance = new SunmiPrinterManager();
-        return instance;
+    public SunmiPrinterManager(Context context) {
+        this.context = context;
     }
 
-    public void initPrinter(Context context) {
+    public void connect() {
         try {
-            Class<?> manager = Class.forName("com.sunmi.peripheral.printer.InnerPrinterManager");
+            Class.forName("com.sunmi.peripheral.printer.InnerPrinterManager");
             connected = true;
-            Log.d(TAG, "Sunmi printer connected via reflection");
+            Log.d(TAG, "Sunmi printer connected");
         } catch (ClassNotFoundException e) {
             connected = false;
-            Log.w(TAG, "Sunmi printer not available on this device");
+            Log.w(TAG, "Sunmi printer not available");
         }
     }
 
-    public boolean isConnected() { return connected; }
-
-    public void printText(String text) {
-        if (!connected) { Log.w(TAG, "Printer not connected"); return; }
-        try {
-            // Printer logic via reflection
-            Log.d(TAG, "Printing: " + text);
-        } catch (Exception e) {
-            Log.e(TAG, "Print error: " + e.getMessage());
-        }
+    public boolean isConnected() {
+        return connected;
     }
 
-    public void disconnect(Context context) {
+    public void printRaw(byte[] data) {
+        if (!connected) {
+            Log.w(TAG, "Printer not connected");
+            return;
+        }
+        Log.d(TAG, "Printing " + data.length + " bytes");
+    }
+
+    public void disconnect() {
         connected = false;
+        Log.d(TAG, "Printer disconnected");
     }
 }
