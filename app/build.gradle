@@ -67,4 +67,7 @@ dependencies {
 
     // Coroutines pou apèl rezo asenkwòn
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+
+    // Pull-to-refresh pou "Mes fiches"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }
