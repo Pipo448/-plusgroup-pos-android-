@@ -9,6 +9,7 @@ import com.plusgroup.pos.network.models.ApiMessageResponse
 import com.plusgroup.pos.network.models.BlockedNumber
 import com.plusgroup.pos.network.models.CompanySetting
 import com.plusgroup.pos.network.models.Draw
+import com.plusgroup.pos.network.models.FicheSummary
 import com.plusgroup.pos.network.models.LotteryGame
 import com.plusgroup.pos.network.models.LoginRequest
 import com.plusgroup.pos.network.models.LoginResponse
@@ -53,20 +54,26 @@ interface ApiService {
     @GET("agent/tickets/verify/{ticketNumber}")
     suspend fun verifyTicket(@Path("ticketNumber") ticketNumber: String): Response<ApiDataResponse<VerifyTicketResult>>
 
-    // "Fich Mwen Yo" — tikè ajan an, ak filtè dat opsyonèl (yyyy-MM-dd)
+    // "Fich Mwen Yo" — kounye a retounen YON REZIME PA FICH (gwoupe pa
+    // fiche_number backend a fè), pa yon liy pa boul.
     @GET("agent/tickets")
     suspend fun getMyTickets(
         @Query("start") start: String? = null,
         @Query("end") end: String? = null,
-    ): Response<ApiListResponse<Ticket>>
+    ): Response<ApiListResponse<FicheSummary>>
 
-    // Detay yon sèl tikè pa ID (itil pou refreshi/reklike apre yon aksyon)
+    // Detay yon sèl tikè pa ID (rete itil pou lòt kontèks, egzanp verifikasyon)
     @GET("agent/tickets/{id}")
     suspend fun getTicketById(@Path("id") id: String): Response<ApiDataResponse<Ticket>>
 
-    // "Elimine" nan "Mes fiches" — anile yon tikè pa ID
+    // "Elimine" sou yon SÈL tikè (rete disponib, men "Mes fiches" itilize
+    // pito cancelFiche() anba a pou anile TOUT liy yon fich yon sèl kou).
     @PATCH("agent/tickets/{id}/cancel")
     suspend fun cancelTicket(@Path("id") id: String): Response<ApiMessageResponse>
+
+    // "Elimine" nan "Mes fiches" — anile TOUT liy ki fè pati fich la.
+    @PATCH("agent/tickets/fiche/{ficheNumber}/cancel")
+    suspend fun cancelFiche(@Path("ficheNumber") ficheNumber: String): Response<ApiMessageResponse>
 
     // "Rapò" — Rapò Pasyèl pou yon jou
     @GET("agent/reports/partial")

@@ -45,8 +45,6 @@ data class Draw(
     val id: String,
     val name: String? = null,
     val status: String? = null,
-    // Lòt chan yo (heure tiraj, dat, elatriye) ka ajoute apre si backend
-    // retounen yo — mete kòm nullable pou pa kraze si yo pa la.
 )
 
 data class LotteryGame(
@@ -67,6 +65,9 @@ data class SellTicketRequest(
     val betAmount: Double,
     val posDeviceId: String? = null,
     val isOfflineSale: Boolean = false,
+    // Menm valè a dwe pase pou TOUT liy ki fè pati YON SÈL fich, pou
+    // backend lan ka gwoupe yo ansanm nan "Mes fiches".
+    val ficheNumber: String? = null,
 )
 
 data class SellTicketResponse(
@@ -87,8 +88,6 @@ data class AgentProfile(
     val username: String? = null,
     @com.google.gson.annotations.SerializedName("full_name")
     val fullName: String? = null,
-    // Chan sa yo ka pa egziste ankò nan `users` — rete nullable espre.
-    // Si yo manke, Dashboard la montre "Illimité" pa default.
     @com.google.gson.annotations.SerializedName("credit_vente")
     val creditVente: Double? = null,
     @com.google.gson.annotations.SerializedName("limite_gain")
@@ -110,6 +109,8 @@ data class AgentBalance(
     val lifetimeSales: Double? = null,
 )
 
+// Ansyen modèl "yon liy = yon tikè" — rete la pou verifyTicket ("Chache
+// Fich") ki toujou retounen yon sèl tikè apa.
 data class Ticket(
     val id: String? = null,
     @com.google.gson.annotations.SerializedName("ticket_number")
@@ -117,9 +118,6 @@ data class Ticket(
     val status: String? = null,
     @com.google.gson.annotations.SerializedName("bet_amount")
     val betAmount: Double? = null,
-    // IMPÒTAN: backend la estoke sa a kòm yon kolòn jsonb (yon vrè Array
-    // JSON), pa yon String senp — kidonk modèl la dwe List<String>, pa
-    // String, sinon Gson jete "Expected a string but was BEGIN_ARRAY".
     val numbers: List<String>? = null,
     @com.google.gson.annotations.SerializedName("sold_at")
     val soldAt: String? = null,
@@ -129,12 +127,34 @@ data class Ticket(
     val prizeAmount: Double? = null,
 )
 
+// ==================== FICH MWEN YO (gwoupe pa fiche_number) ====================
+// Backend lan (getMyTickets) kounye a retounen YON REZIME pa fich — pa
+// yon liy pa boul. `lines` gen tout boul yo (kòd/nimewo/pri) ki fè pati
+// menm fich la.
+data class FicheLineSummary(
+    val id: String? = null,
+    val numero: String? = null,
+    val betAmount: Double? = null,
+    val status: String? = null,
+)
+
+data class FicheSummary(
+    val ficheNumber: String? = null,
+    val ticketIds: List<String>? = null,
+    val ticketNumber: String? = null,
+    val drawName: String? = null,
+    val soldAt: String? = null,
+    val totalMise: Double? = null,
+    val totalGain: Double? = null,
+    val status: String? = null,
+    val lines: List<FicheLineSummary>? = null,
+)
+
 data class VerifyTicketResult(
     val ticketNumber: String? = null,
     val status: String? = null,
     val isWinner: Boolean? = null,
     val prizeAmount: Double? = null,
-    // Menm rezon ak Ticket.numbers anwo a — vrè Array JSON, pa String.
     val numbers: List<String>? = null,
     val betAmount: Double? = null,
     val soldAt: String? = null,

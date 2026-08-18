@@ -7,6 +7,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.plusgroup.pos.databinding.ActivityNewFicheBinding
 import com.plusgroup.pos.databinding.ItemFicheLineBinding
 import com.plusgroup.pos.network.ApiClient
@@ -32,13 +34,17 @@ import java.text.DecimalFormat
  * afekte lòt liy yo.
  *
  * Yon SÈL bouton (ikòn enprime anlè a) fè tout bagay: soumèt chak liy bay
- * backend la, epi si tout liy yo pase, enprime resi a otomatikman —
- * san popup/konfimasyon anplis.
+ * backend la, epi si tout liy yo pase, enprime resi a otomatikman.
  *
- * PÈFÒMANS: soumisyon tikè yo fèt AN PARALÈL (pa youn apre lòt), e pwofil
- * konpayi/paramèt yo kache apre premye chaje a — sa redwi anpil kantite
- * tan ekran an rete "ap chaje" anvan enprime a kòmanse, espesyalman pou
- * fich ki gen anpil liy.
+ * FICHE_NUMBER: tout liy yon menm fich jenere e voye AK MENM `ficheNumber`
+ * la, pou backend lan ka gwoupe yo ansanm nan "Mes fiches" (olye chak liy
+ * parèt kòm yon fich apa).
+ *
+ * PREFILL (REJWE): si ekran sa a louvri ak "PREFILL_LINES_JSON" nan
+ * Intent la (soti nan MyFichesActivity, bouton "Rejwe"), nou chaje boul
+ * yo tou prepli, editab, epi ajan an ka ajoute/retire/chanje tiraj anvan
+ * l soumèt kòm yon NOUVO vant (nouvo fiche_number, pa yon modifikasyon
+ * ansyen fich la).
  */
 class NewFicheActivity : AppCompatActivity() {
 
@@ -58,17 +64,13 @@ class NewFicheActivity : AppCompatActivity() {
         val optionLabel: String? = null,
     )
 
+    private data class PrefillLine(val numero: String, val price: Double)
+
     private val lines = mutableListOf<FicheLine>()
 
     private val moneyFormat = DecimalFormat("#,##0.00")
     private val printerManager: PrinterManager by lazy { PrinterManager(applicationContext) }
 
-    /**
-     * Ti "kach" senp pou pwofil konpayi/paramèt yo, valab pandan tout vi
-     * pwosesis app la (rete la jiskaske app la fèmen nèt). Sa evite fè 2
-     * rekèt rezo anplis CHAK fwa ajan an enprime — nou chèche yo yon sèl
-     * fwa, epi reyitilize valè yo apre.
-     */
     private object CompanyInfoCache {
         var companyName: String? = null
         var vendeur: String? = null
@@ -96,7 +98,6 @@ class NewFicheActivity : AppCompatActivity() {
 
         binding.tvChwaziTiraj.setOnClickListener { showDrawPicker() }
 
-        // Bouton rapid pou chak kategori pari
         binding.btnBPaire.setOnClickListener { addQuickCategory(QuickCategory.B_PAIRE) }
         binding.btnGrap.setOnClickListener { addQuickCategory(QuickCategory.GRAP) }
         binding.btnP0.setOnClickListener { addQuickCategory(QuickCategory.pick(0)) }
@@ -113,7 +114,6 @@ class NewFicheActivity : AppCompatActivity() {
         binding.btnLoto4.setOnClickListener { showLoto4OptionsDialog() }
         binding.btnLoto5.setOnClickListener { showLoto5OptionsDialog() }
 
-        // Bouton chwazi (Mariage oswa Loto4) ki parèt SÈLMAN lè 4 chif tape.
         binding.btnChooseMariage.setOnClickListener { addMariageLine() }
         binding.btnChooseLoto4.setOnClickListener { showLoto4OptionsDialog() }
 
@@ -147,6 +147,8 @@ class NewFicheActivity : AppCompatActivity() {
                 activeGames = gamesRes.body()?.data ?: emptyList()
                 selectedGame = activeGames.firstOrNull()
                 binding.tvFicheLabel.text = (selectedGame?.name ?: "BORLETTE").uppercase()
+
+                applyPrefillIfAny()
             } catch (e: Exception) {
                 Toast.makeText(
                     this@NewFicheActivity,
@@ -155,6 +157,59 @@ class NewFicheActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
+
+    // ==================== PREFILL (soti nan "Rejwe" nan Mes fiches) ====================
+
+    private fun applyPrefillIfAny() {
+        val prefillDrawName = intent.getStringExtra("PREFILL_DRAW_NAME")
+        val prefillLinesJson = intent.getStringExtra("PREFILL_LINES_JSON")
+
+        if (prefillDrawName != null) {
+            val match = openDraws.firstOrNull { it.name == prefillDrawName }
+            if (match != null) {
+                selectedDraw = match
+                binding.tvChwaziTiraj.text = match.name ?: "CHWAZI TIRAJ"
+            } else {
+                Toast.makeText(
+                    this,
+                    "Tiraj '$prefillDrawName' pa ouvè kounye a — chwazi yon lòt tiraj",
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
+        }
+
+        if (!prefillLinesJson.isNullOrBlank()) {
+            try {
+                val type = object : TypeToken<List<Map<String, Any>>>() {}.type
+                val rawLines: List<Map<String, Any>> = Gson().fromJson(prefillLinesJson, type)
+                val drawName = selectedDraw?.name ?: prefillDrawName ?: "—"
+
+                rawLines.forEach { raw ->
+                    val numero = (raw["numero"] as? String)?.trim() ?: return@forEach
+                    val price = (raw["price"] as? Double) ?: 0.0
+                    if (numero.isEmpty() || price <= 0) return@forEach
+                    lines.add(FicheLine(drawName, numero, price, categoryForNumero(numero)))
+                }
+                refreshLinesList()
+                refreshTotal()
+
+                if (rawLines.isNotEmpty()) {
+                    Toast.makeText(this, "Fich chaje — ajoute/retire liy si w vle, epi enprime", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, "Erè chaje ansyen fich la: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun categoryForNumero(numero: String): String = when {
+        numero.contains("*") -> "MARIAGE"
+        numero.length == 2 -> "BORLETTE"
+        numero.length == 3 -> "LOTO3"
+        numero.length == 4 -> "LOTO4"
+        numero.length == 5 -> "LOTO5"
+        else -> "BORLETTE"
     }
 
     private fun showDrawPicker() {
@@ -205,10 +260,6 @@ class NewFicheActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Jenere 10 nimewo pou kategori a, apre l mande yon pri, epi ajoute
-     * 10 liy (menm pri chak) nan Fich la.
-     */
     private fun addQuickCategory(category: QuickCategory) {
         if (!requireDrawSelected()) return
 
@@ -283,8 +334,6 @@ class NewFicheActivity : AppCompatActivity() {
     }
 
     // ==================== MARIAGE ====================
-    // Ajan an ka tape swa 4 chif senp (egzanp "2532", nou split li an "25*32"
-    // otomatikman) oswa dirèkteman fòma "XX*YY" ak zetwal la.
     private fun addMariageLine() {
         if (!requireDrawSelected()) return
 
@@ -311,10 +360,7 @@ class NewFicheActivity : AppCompatActivity() {
         refreshTotal()
     }
 
-    // ==================== LOTO4 (2 chif + 2 chif = 4 chif, ak "vire") ====================
-    // "Vire" = chanje pozisyon 2 mwatye yo: 2532 -> 3225 (25|32 vin 32|25).
-    // Chak Opsyon (L4O1/O2/O3) reprezante yon kalkil peman diferan ki fèt
-    // pita — antre a menm nimewo pou tout 3 opsyon yo.
+    // ==================== LOTO4 ====================
     private fun showLoto4OptionsDialog() {
         if (!requireDrawSelected()) return
 
@@ -344,7 +390,7 @@ class NewFicheActivity : AppCompatActivity() {
         showOptionsCheckboxDialog("OPTIONS LOTO 4", options, price, "LOTO4")
     }
 
-    // ==================== LOTO5 (3 chif + 2 chif = 5 chif, san "vire") ====================
+    // ==================== LOTO5 ====================
     private fun showLoto5OptionsDialog() {
         if (!requireDrawSelected()) return
 
@@ -369,13 +415,9 @@ class NewFicheActivity : AppCompatActivity() {
         showOptionsCheckboxDialog("OPTIONS LOTO 5", options, price, "LOTO5")
     }
 
-    /**
-     * Dyalòg jenerik ak checkbox: chak liy montre "Label -> Nimewo" ak pri
-     * a. Lè ajan an klike VALIDER, sèlman liy ki koche yo ajoute nan Fich la.
-     */
     private fun showOptionsCheckboxDialog(
         title: String,
-        options: List<Triple<String, String, String>>, // (label ekran, nimewo, optionLabel done)
+        options: List<Triple<String, String, String>>,
         price: Double,
         category: String,
     ) {
@@ -428,7 +470,6 @@ class NewFicheActivity : AppCompatActivity() {
             .show()
     }
 
-    // ==================== GADYEN: bloke vant si pa gen tiraj chwazi ====================
     private fun requireDrawSelected(): Boolean {
         if (selectedDraw == null) {
             Toast.makeText(this, "Chwazi yon Tiraj anvan ou ka vann", Toast.LENGTH_LONG).show()
@@ -437,22 +478,23 @@ class NewFicheActivity : AppCompatActivity() {
         return true
     }
 
+    // ==================== JENERE NIMEWO FICH ====================
+    // Yon SÈL nimewo pou TOUT liy nan menm fich la — jenere yon sèl fwa
+    // pandan `submitFiche()`, epi voye ak CHAK rekèt sellTicket, epi
+    // reyitilize pou enprime a (olye 2 nimewo diferan tankou anvan).
+    private fun generateFicheNumber(): String {
+        val raw = (System.currentTimeMillis() % 1_000_000_000L).toString().padStart(12, '0').takeLast(12)
+        return "${raw.substring(0, 4)}-${raw.substring(4, 8)}-${raw.substring(8, 12)}"
+    }
+
     // ==================== ENPRIME FICH LA ====================
-    // Itilize menm PrinterManager ki deja konfigire (SUNMI oswa Bluetooth
-    // eksitèn) — reyitilize `printFicheReceipt()`. Pwofil konpayi/paramèt
-    // yo KACHE apre premye chaje a (CompanyInfoCache) pou evite 2 rekèt
-    // rezo anplis chak fwa ajan an enprime.
-    private fun printCurrentFiche() {
+    private fun printCurrentFiche(ficheNumber: String) {
         if (lines.isEmpty()) {
             Toast.makeText(this, "Pa gen liy pou enprime", Toast.LENGTH_SHORT).show()
             return
         }
         val drawName = selectedDraw?.name ?: "—"
         val total = lines.sumOf { it.price }
-
-        // Nimewo Fich fòma "XXXX-XXXX-XXXX" (12 chif, gwoupe pa 4).
-        val raw = (System.currentTimeMillis() % 1_000_000_000L).toString().padStart(12, '0').takeLast(12)
-        val ficheNumber = "${raw.substring(0, 4)}-${raw.substring(4, 8)}-${raw.substring(8, 12)}"
 
         val dateFormat = java.text.SimpleDateFormat("dd/MMM/yyyy hh:mm a", java.util.Locale.US)
         val dateTimeText = dateFormat.format(java.util.Date())
@@ -481,7 +523,6 @@ class NewFicheActivity : AppCompatActivity() {
                     val msg = settings.firstOrNull { it.key == "message" }?.value
                     if (!msg.isNullOrBlank()) CompanyInfoCache.footerMessage = msg
                 } catch (_: Exception) {
-                    // Si sa echwe, kontinye ak valè default yo — pa bloke enprime a.
                 } finally {
                     CompanyInfoCache.loaded = true
                 }
@@ -521,14 +562,12 @@ class NewFicheActivity : AppCompatActivity() {
         }
     }
 
-    // ==================== LIS LIY (chak liy: kòbèy + kreyon apa) ====================
+    // ==================== LIS LIY ====================
 
     private fun refreshLinesList() {
         binding.llLinesContainer.removeAllViews()
         val inflater = LayoutInflater.from(this)
 
-        // Gwoupe liy yo pa kategori (BORLETTE, LOTO3, MARIAGE, LOTO4, LOTO5),
-        // nan lòd yo te premye parèt la — chak gwoup gen pwòp antèt.
         val categoriesInOrder = LinkedHashSet<String>()
         lines.forEach { categoriesInOrder.add(it.category) }
 
@@ -575,10 +614,6 @@ class NewFicheActivity : AppCompatActivity() {
     }
 
     // ==================== SOUMÈT + ENPRIME (AN PARALÈL) ====================
-    // Yon SÈL aksyon: bouton enprime a rele fonksyon sa a dirèkteman.
-    // Tout liy yo soumèt AN MENM TAN (an paralèl, pa youn apre lòt) — sa
-    // redwi anpil tan atant pou fich ki gen anpil liy. Si tout liy yo
-    // reyisi, enprime a fèt otomatikman, san popup/konfimasyon anplis.
 
     private fun submitFiche() {
         val draw = selectedDraw
@@ -598,16 +633,15 @@ class NewFicheActivity : AppCompatActivity() {
         }
 
         val deviceId = DeviceIdHelper.getDeviceId(this)
+        // Yon SÈL nimewo fich pou TOUT liy sa yo — pèmèt backend lan
+        // gwoupe yo ansanm nan "Mes fiches".
+        val ficheNumber = generateFicheNumber()
         binding.btnPrint.isEnabled = false
 
         lifecycleScope.launch {
             val api = ApiClient.getService(applicationContext)
             val linesToSubmit = lines.toList()
 
-            // Soumèt TOUT liy yo AN PARALÈL — chak rekèt kòmanse san
-            // tann rezilta lòt yo, sa redwi tan total la anpil pou fich
-            // ki gen plizyè liy (10 liy an paralèl ≈ tan 1 sèl rekèt,
-            // olye 10× tan 1 rekèt tankou avan).
             val results: List<Pair<FicheLine, String?>> = coroutineScope {
                 linesToSubmit.map { line ->
                     async {
@@ -619,6 +653,7 @@ class NewFicheActivity : AppCompatActivity() {
                                     numbers = listOf(line.numero),
                                     betAmount = line.price,
                                     posDeviceId = deviceId,
+                                    ficheNumber = ficheNumber,
                                 )
                             )
                             if (res.isSuccessful) {
@@ -640,7 +675,7 @@ class NewFicheActivity : AppCompatActivity() {
             binding.btnPrint.isEnabled = true
 
             if (successCount == linesToSubmit.size) {
-                printCurrentFiche()
+                printCurrentFiche(ficheNumber)
                 lines.clear()
                 binding.etBoulLa.text?.clear()
                 binding.etMontant.text?.clear()
