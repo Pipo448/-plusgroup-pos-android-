@@ -1,126 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  REDESIGN — estrikti ID yo rete EGZAKTEMAN menm jan ak orijinal la, kidonk
+  DashboardActivity.kt pa bezwen okenn chanjman. Sèl bagay ki chanje se
+  estil vizyèl: bouton won anlè, kat balans ak kwen awondi + lonbraj,
+  bouton "pilil" anba, ak background ki gen vag (@drawable/bg_wave_blue,
+  ki deja egziste nan pwojè a — itilize tou nan activity_my_fiches.xml).
+
+  LOGO: mwen mete yon ImageView ki pwente sou @mipmap/ic_launcher kòm
+  plasholder. Si w vle chak tenant afiche PWÒP logo yo (pa yon logo
+  jenerik), n ap bezwen chaje l dinamikman ak Glide/Coil apati yon URL
+  backend (egzanp company_settings.logo_url) — di m si w vle sa, m ajoute
+  lojik la nan DashboardActivity.kt.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#E8F1FB">
+    android:background="@drawable/bg_wave_blue">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-        <!-- Ba wo a: enprimant / mesaj / meni -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <ImageButton
-                android:id="@+id/btnPrinter"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentStart="true"
-                android:background="@android:color/transparent"
-                android:backgroundTint="#22C55E"
-                android:contentDescription="Enprimant"
-                android:src="@android:drawable/ic_menu_gallery" />
-
-            <ImageButton
-                android:id="@+id/btnMail"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_toEndOf="@id/btnPrinter"
-                android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
-                android:backgroundTint="#3B82F6"
-                android:contentDescription="Notifikasyon"
-                android:src="@android:drawable/ic_dialog_email" />
-
-            <ImageButton
-                android:id="@+id/btnMenu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentEnd="true"
-                android:background="@android:color/transparent"
-                android:backgroundTint="#F59E0B"
-                android:contentDescription="Meni"
-                android:src="@android:drawable/ic_menu_more" />
-        </RelativeLayout>
-
-        <!-- Salut + rafrechi -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:paddingTop="24dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvSalut"
-                android:layout_width="wrap_content"
+            <!-- Ba wo a: enprimant / mesaj / meni — kounye a won -->
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Salut"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:padding="16dp">
 
-            <ImageButton
-                android:id="@+id/btnRefresh"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginStart="8dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="Rafrechi"
-                android:src="@android:drawable/ic_popup_sync" />
-        </LinearLayout>
+                <ImageButton
+                    android:id="@+id/btnPrinter"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/bg_circle_button"
+                    android:backgroundTint="#22C55E"
+                    android:padding="10dp"
+                    android:elevation="3dp"
+                    android:contentDescription="Enprimant"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:tint="@android:color/white" />
 
-        <!-- Kat balans -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:padding="20dp"
-            android:elevation="4dp">
+                <ImageButton
+                    android:id="@+id/btnMail"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_toEndOf="@id/btnPrinter"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_circle_button"
+                    android:backgroundTint="#3B82F6"
+                    android:padding="10dp"
+                    android:elevation="3dp"
+                    android:contentDescription="Notifikasyon"
+                    android:src="@android:drawable/ic_dialog_email"
+                    app:tint="@android:color/white" />
 
+                <ImageButton
+                    android:id="@+id/btnMenu"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/bg_circle_button"
+                    android:backgroundTint="#F59E0B"
+                    android:padding="10dp"
+                    android:elevation="3dp"
+                    android:contentDescription="Meni"
+                    android:src="@android:drawable/ic_menu_more"
+                    app:tint="@android:color/white" />
+            </RelativeLayout>
+
+            <!-- Logo konpayi a -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:src="@mipmap/ic_launcher"
+                android:contentDescription="Logo konpayi a" />
+
+            <!-- Salut + rafrechi -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="8dp">
+
+                <TextView
+                    android:id="@+id/tvSalut"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Salut"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#1E293B" />
+
+                <ImageButton
+                    android:id="@+id/btnRefresh"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Rafrechi"
+                    android:src="@android:drawable/ic_popup_sync" />
+            </LinearLayout>
+
+            <!-- Kat balans — kwen awondi + lonbraj -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card_rounded"
+                android:padding="24dp"
+                android:elevation="6dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tvBalance"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="0.00"
-                        android:textSize="18sp"
-                        android:textColor="#888888" />
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tvBalance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0.00"
+                            android:textSize="18sp"
+                            android:textColor="#888888" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Balance"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Balance"
-                        android:textStyle="bold" />
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tvCreditVente"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Illimité"
+                            android:textSize="18sp"
+                            android:textColor="#888888" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Crédit de vente"
+                            android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:paddingTop="16dp">
 
                     <TextView
-                        android:id="@+id/tvCreditVente"
+                        android:id="@+id/tvLimiteGain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Illimité"
@@ -130,79 +190,80 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Crédit de vente"
+                        android:text="Limite gain"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Bouton prensipal yo — kounye a "pilil" -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:paddingTop="16dp">
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp">
 
-                <TextView
-                    android:id="@+id/tvLimiteGain"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Illimité"
-                    android:textSize="18sp"
-                    android:textColor="#888888" />
+                <Button
+                    android:id="@+id/btnNouvelFich"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="NOUVÈL FICH"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_pill_button"
+                    android:backgroundTint="#22C55E"
+                    android:elevation="3dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Limite gain"
-                    android:textStyle="bold" />
+                <Button
+                    android:id="@+id/btnChacheFich"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="CHACHE FICH"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_pill_button"
+                    android:backgroundTint="#3B82F6"
+                    android:elevation="3dp" />
+
+                <Button
+                    android:id="@+id/btnFichMwenYo"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="FICH MWEN YO"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_pill_button"
+                    android:backgroundTint="#F59E0B"
+                    android:elevation="3dp" />
+
+                <Button
+                    android:id="@+id/btnRapo"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="RAPÒ"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_pill_button"
+                    android:backgroundTint="#DC2626"
+                    android:elevation="3dp" />
             </LinearLayout>
+
+            <!-- Footer: non konpayi devlopè a -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="20dp"
+                android:text="Plus Group Lottery"
+                android:textSize="12sp"
+                android:textColor="#64748B" />
+
         </LinearLayout>
-
-        <!-- Bouton prensipal yo -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp">
-
-            <Button
-                android:id="@+id/btnNouvelFich"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="12dp"
-                android:text="NOUVÈL FICH"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#22C55E" />
-
-            <Button
-                android:id="@+id/btnChacheFich"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="12dp"
-                android:text="CHACHE FICH"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#3B82F6" />
-
-            <Button
-                android:id="@+id/btnFichMwenYo"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="12dp"
-                android:text="FICH MWEN YO"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#F59E0B" />
-
-            <Button
-                android:id="@+id/btnRapo"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="RAPÒ"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#DC2626" />
-        </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
     <!-- Ba anba a: Bolèt / Paramèt -->
     <LinearLayout
