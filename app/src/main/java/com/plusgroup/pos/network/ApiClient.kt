@@ -29,7 +29,10 @@ object ApiClient {
             }
 
             val logging = HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BASIC
+                // TANPORÈ pou debug: BODY montre tout JSON repons/rekèt yo
+                // nan Logcat. Remete BASIC apre debug la fini (BODY ekspoze
+                // done sansib e li ka ralanti app la an pwodiksyon).
+                level = HttpLoggingInterceptor.Level.BODY
             }
 
             val client = OkHttpClient.Builder()
