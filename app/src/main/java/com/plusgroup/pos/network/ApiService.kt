@@ -9,6 +9,7 @@ import com.plusgroup.pos.network.models.ApiMessageResponse
 import com.plusgroup.pos.network.models.BlockedNumber
 import com.plusgroup.pos.network.models.CompanySetting
 import com.plusgroup.pos.network.models.Draw
+import com.plusgroup.pos.network.models.EliminatedReport
 import com.plusgroup.pos.network.models.FicheSummary
 import com.plusgroup.pos.network.models.LotteryGame
 import com.plusgroup.pos.network.models.LoginRequest
@@ -78,6 +79,10 @@ interface ApiService {
     // "Rapò" — Rapò Pasyèl pou yon jou
     @GET("agent/reports/partial")
     suspend fun getPartialReport(@Query("date") date: String? = null): Response<ApiDataResponse<PartialReport>>
+
+    // "Rapò" — F.ELIMINER : lis fich ajan an te elimine pou yon jou
+    @GET("agent/reports/eliminated")
+    suspend fun getEliminatedReport(@Query("date") date: String? = null): Response<ApiDataResponse<EliminatedReport>>
 
     // "Boul Ki Soti" — nimewo ki soti pou tiraj ki gen rezilta deja antre
     @GET("agent/draws/results")

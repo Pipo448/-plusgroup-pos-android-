@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ATANSYON: fichye sa a se yon REKONSTRIKSYON — mwen pa t gen aksè a
+  activity_report.xml ORIJINAL ou a, se sèlman ID ki itilize nan
+  ReportActivity.kt mwen te ka konfime (btnBack, btnPartiel, btnFTirage,
+  btnFGagnant, btnTrasact, btnFEliminer, tvDate, btnSearch, tabBolet,
+  tabParamet, tvTirageValue, tvDateValue, tvFicheVenduValue, tvVenteValue,
+  tvCommissionValue). Yo TOUT prezan isit la ak menm non yo, ANSANM ak 3
+  nouvo eleman pou fonksyonalite "F.ELIMINER" + bouton print:
+  btnPrintReport, llPartialResult / llEliminatedResult (seksyon k ap
+  kache/parèt), llEliminatedContainer, tvEliminatedSummary.
+
+  Si stil (koulè, dimansyon) pa egzakteman jan app ou a te ye, ajiste yo
+  pou yo matche rès app la — sa pa afekte fonksyònman kòd Kotlin lan.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,149 +21,168 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Retounen"
+            android:src="@android:drawable/ic_menu_revert" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="Rapò"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <!-- NOUVO: bouton print — enprime rapò ki afiche kounye a -->
+        <ImageButton
+            android:id="@+id/btnPrintReport"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Enprime rapò"
+            android:src="@android:drawable/ic_menu_share" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="8dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
 
-            <ImageButton
-                android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@android:color/transparent"
-                android:contentDescription="Retounen"
-                android:src="@android:drawable/ic_menu_revert" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- ==================== BOUTON KATEGORI RAPÒ ==================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:text="Rapport"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                <Button
+                    android:id="@+id/btnPartiel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:backgroundTint="#22C55E"
+                    android:textColor="@android:color/white"
+                    android:text="PARTIEL" />
+
+                <Button
+                    android:id="@+id/btnFTirage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:backgroundTint="#F59E0B"
+                    android:textColor="@android:color/white"
+                    android:text="F.TIRAGE" />
+
+                <Button
+                    android:id="@+id/btnFGagnant"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#3B82F6"
+                    android:textColor="@android:color/white"
+                    android:text="F.GAGNANT" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/btnTrasact"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:backgroundTint="#3B82F6"
+                    android:textColor="@android:color/white"
+                    android:text="TRASACT.." />
+
+                <Button
+                    android:id="@+id/btnFEliminer"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="#F59E0B"
+                    android:textColor="@android:color/white"
+                    android:text="F.ELIMINER" />
+            </LinearLayout>
+
+            <!-- ==================== DAT ==================== -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#808080"
+                android:textColor="@android:color/white"
+                android:padding="12dp"
+                android:layout_marginBottom="4dp" />
+
+            <ImageButton
+                android:id="@+id/btnSearch"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_gravity="end"
+                android:backgroundTint="#3B82F6"
+                android:contentDescription="Chèche"
+                android:src="@android:drawable/ic_menu_search" />
+
+            <!-- ==================== REZILTA — RAPÒ PASYÈL ==================== -->
+            <LinearLayout
+                android:id="@+id/llPartialResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Bouton kategori rapò -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button android:id="@+id/btnPartiel"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="4dp"
-                        android:text="PARTIEL" android:textColor="@android:color/white"
-                        android:backgroundTint="#22C55E" android:textSize="11sp" />
-
-                    <Button android:id="@+id/btnFTirage"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="4dp"
-                        android:text="F.TIRAGE" android:textColor="@android:color/white"
-                        android:backgroundTint="#F59E0B" android:textSize="11sp" />
-
-                    <Button android:id="@+id/btnFGagnant"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="F.GAGNANT" android:textColor="@android:color/white"
-                        android:backgroundTint="#3B82F6" android:textSize="11sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp">
-
-                    <Button android:id="@+id/btnTrasact"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="4dp"
-                        android:text="TRASACT.." android:textColor="@android:color/white"
-                        android:backgroundTint="#3B82F6" android:textSize="11sp" />
-
-                    <Button android:id="@+id/btnFEliminer"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="F.ELIMINER" android:textColor="@android:color/white"
-                        android:backgroundTint="#F59E0B" android:textSize="11sp" />
-                </LinearLayout>
+                android:visibility="visible">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="24dp"
-                    android:tint="#3B82F6"
-                    android:src="@android:drawable/ic_menu_gallery"
-                    android:contentDescription="Enprime" />
+                    android:layout_marginTop="16dp"
+                    android:src="@android:drawable/ic_menu_agenda" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_gravity="center"
                     android:gravity="center"
                     android:text="Rapport partiel"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Date :"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvDate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        android:background="#808080"
-                        android:textColor="@android:color/white"
-                        android:padding="12dp" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/btnSearch"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="12dp"
-                    android:background="@android:color/transparent"
-                    android:tint="#DC2626"
-                    android:contentDescription="Chèche"
-                    android:src="@android:drawable/ic_menu_search" />
-
-                <!-- Rezilta Rapò Pasyèl -->
                 <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp">
+                    android:layout_height="wrap_content">
 
                     <TableRow>
-                        <TextView android:text="Tirage" android:textStyle="bold" android:padding="4dp" android:layout_width="140dp" />
+                        <TextView android:text="Tirage" android:textStyle="bold" android:padding="4dp" />
                         <TextView android:id="@+id/tvTirageValue" android:padding="4dp" />
                     </TableRow>
                     <TableRow>
@@ -169,15 +202,49 @@
                         <TextView android:id="@+id/tvCommissionValue" android:padding="4dp" />
                     </TableRow>
                 </TableLayout>
-
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
 
-    <!-- Ba anba a: Bolèt / Paramèt (menm ak Dashboard la) -->
+            <!-- ==================== REZILTA — F.ELIMINER (NOUVO) ==================== -->
+            <LinearLayout
+                android:id="@+id/llEliminatedResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Fich Elimine"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/tvEliminatedSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textColor="#8B0000"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:id="@+id/llEliminatedContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="56dp"
         android:orientation="horizontal"
         android:background="#3B82F6">
 
@@ -187,14 +254,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bolèt"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
+            android:gravity="center" />
 
         <LinearLayout
             android:id="@+id/tabParamet"
@@ -202,14 +262,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Paramèt"
-                android:textColor="@android:color/white"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:gravity="center" />
     </LinearLayout>
 </LinearLayout>
