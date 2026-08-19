@@ -45,7 +45,7 @@
                     android:padding="10dp"
                     android:elevation="3dp"
                     android:contentDescription="Enprimant"
-                    android:src="@android:drawable/ic_menu_gallery"
+                    android:src="@drawable/ic_printer"
                     android:tint="@android:color/white" />
 
                 <ImageButton
@@ -72,7 +72,7 @@
                     android:padding="10dp"
                     android:elevation="3dp"
                     android:contentDescription="Meni"
-                    android:src="@android:drawable/ic_menu_more"
+                    android:src="@drawable/ic_more_dots"
                     android:tint="@android:color/white" />
             </RelativeLayout>
 
@@ -208,6 +208,7 @@
 
                 <Button
                     android:id="@+id/btnNouvelFich"
+                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="12dp"
@@ -220,6 +221,7 @@
 
                 <Button
                     android:id="@+id/btnChacheFich"
+                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="12dp"
@@ -232,6 +234,7 @@
 
                 <Button
                     android:id="@+id/btnFichMwenYo"
+                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="12dp"
@@ -244,6 +247,7 @@
 
                 <Button
                     android:id="@+id/btnRapo"
+                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="16dp"
