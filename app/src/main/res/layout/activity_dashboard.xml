@@ -208,54 +208,50 @@
 
                 <Button
                     android:id="@+id/btnNouvelFich"
-                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="12dp"
                     android:text="NOUVÈL FICH"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:background="@drawable/bg_pill_button"
                     android:backgroundTint="#22C55E"
+                    app:cornerRadius="28dp"
                     android:elevation="3dp" />
 
                 <Button
                     android:id="@+id/btnChacheFich"
-                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="12dp"
                     android:text="CHACHE FICH"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:background="@drawable/bg_pill_button"
                     android:backgroundTint="#3B82F6"
+                    app:cornerRadius="28dp"
                     android:elevation="3dp" />
 
                 <Button
                     android:id="@+id/btnFichMwenYo"
-                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="12dp"
                     android:text="FICH MWEN YO"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:background="@drawable/bg_pill_button"
                     android:backgroundTint="#F59E0B"
+                    app:cornerRadius="28dp"
                     android:elevation="3dp" />
 
                 <Button
                     android:id="@+id/btnRapo"
-                    style="@style/Widget.AppCompat.Button"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="16dp"
                     android:text="RAPÒ"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
-                    android:background="@drawable/bg_pill_button"
                     android:backgroundTint="#DC2626"
+                    app:cornerRadius="28dp"
                     android:elevation="3dp" />
             </LinearLayout>
 
