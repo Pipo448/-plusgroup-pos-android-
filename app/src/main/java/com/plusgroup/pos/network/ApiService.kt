@@ -10,6 +10,9 @@ import com.plusgroup.pos.network.models.BlockedNumber
 import com.plusgroup.pos.network.models.CompanySetting
 import com.plusgroup.pos.network.models.Draw
 import com.plusgroup.pos.network.models.EliminatedReport
+import com.plusgroup.pos.network.models.FinTirageReport
+import com.plusgroup.pos.network.models.GagnantReport
+import com.plusgroup.pos.network.models.TransactionLine
 import com.plusgroup.pos.network.models.FicheSummary
 import com.plusgroup.pos.network.models.LotteryGame
 import com.plusgroup.pos.network.models.LoginRequest
@@ -83,6 +86,29 @@ interface ApiService {
     // "Rapò" — F.ELIMINER : lis fich ajan an te elimine pou yon jou
     @GET("agent/reports/eliminated")
     suspend fun getEliminatedReport(@Query("date") date: String? = null): Response<ApiDataResponse<EliminatedReport>>
+
+    // "Rapò" — F.TIRAGE : rapò rezime pou yon peryòd (De/A) ak balans
+    @GET("agent/reports/fin-tirage")
+    suspend fun getFinTirageReport(
+        @Query("from") from: String? = null,
+        @Query("to") to: String? = null,
+        @Query("drawName") drawName: String? = null,
+    ): Response<ApiDataResponse<FinTirageReport>>
+
+    // "Rapò" — F.GAGNANT : lis fich ki genyen pou yon peryòd
+    @GET("agent/reports/gagnant")
+    suspend fun getGagnantReport(
+        @Query("from") from: String? = null,
+        @Query("to") to: String? = null,
+        @Query("drawName") drawName: String? = null,
+    ): Response<ApiDataResponse<GagnantReport>>
+
+    // "Rapò" — TRASACT : istwa depo/retrè/ajisteman balans
+    @GET("agent/reports/transactions")
+    suspend fun getTransactionsReport(
+        @Query("from") from: String? = null,
+        @Query("to") to: String? = null,
+    ): Response<ApiListResponse<TransactionLine>>
 
     // "Boul Ki Soti" — nimewo ki soti pou tiraj ki gen rezilta deja antre
     @GET("agent/draws/results")

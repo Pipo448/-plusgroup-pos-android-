@@ -220,6 +220,48 @@ class BluetoothPrinterHelper {
         write(cutPaper())
     }
 
+    /**
+     * Enprime yon RAPÒ jenerik — menm fòma ak
+     * `SunmiPrinterHelper.printReportReceipt()`.
+     */
+    fun printReportReceipt(
+        companyName: String,
+        branchCode: String,
+        phone: String,
+        reportTitle: String,
+        headerLines: List<Pair<String, String>>,
+        bodyFields: List<Pair<String, String>>,
+        footerFields: List<Pair<String, String>> = emptyList(),
+    ) {
+        write(ESC_INIT)
+        write(alignCenter())
+        write(boldOn())
+        write(textLine(companyName))
+        write(boldOff())
+        if (branchCode.isNotBlank()) write(textLine(branchCode))
+        if (phone.isNotBlank()) write(textLine("Tel: $phone"))
+        write(textLine(reportTitle))
+        write(feed(1))
+
+        write(alignLeft())
+        for ((label, value) in headerLines) {
+            write(textLine("$label: $value"))
+        }
+        write(textLine(DASHES))
+        for ((label, value) in bodyFields) {
+            write(textLine(twoColumnLine("$label:", value)))
+        }
+        if (footerFields.isNotEmpty()) {
+            write(textLine(DASHES))
+            for ((label, value) in footerFields) {
+                write(textLine(twoColumnLine("$label:", value)))
+            }
+        }
+
+        write(feed(3))
+        write(cutPaper())
+    }
+
     // Aliyen tèks agoch ak yon valè adwat sou menm liy, ak espas ki
     // ranpli ant yo (sipoze lajè papye ~32 karaktè, 58mm estanda).
     private fun twoColumnLine(left: String, right: String, width: Int = 32): String {

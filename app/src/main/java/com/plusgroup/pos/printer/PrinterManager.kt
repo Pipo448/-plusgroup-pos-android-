@@ -122,6 +122,33 @@ class PrinterManager(private val context: Context) {
         }
     }
 
+    /**
+     * Enprime yon RAPÒ jenerik (Rapport partiel, Fin tirage, Fiche
+     * gagnant, Transactions, Fich elimine) — antèt konpayi, kèk liy
+     * kontèks (Date/Vendeur/Pos...), yon seksyon chan "Etikèt: Valè",
+     * ak yon dezyèm seksyon opsyonèl (`footerFields`, egzanp
+     * Depot/Retrait/Balance).
+     */
+    fun printReportReceipt(
+        companyName: String,
+        branchCode: String,
+        phone: String,
+        reportTitle: String,
+        headerLines: List<Pair<String, String>>,
+        bodyFields: List<Pair<String, String>>,
+        footerFields: List<Pair<String, String>> = emptyList(),
+    ) {
+        if (isSunmiDevice) {
+            sunmiHelper?.printReportReceipt(
+                companyName, branchCode, phone, reportTitle, headerLines, bodyFields, footerFields,
+            )
+        } else {
+            bluetoothHelper.printReportReceipt(
+                companyName, branchCode, phone, reportTitle, headerLines, bodyFields, footerFields,
+            )
+        }
+    }
+
     // --- Jesyon chwa enprimant Bluetooth (sèlman itilize si pa SUNMI) ---
 
     fun getPairedBluetoothPrinters(): List<BluetoothDevice> = bluetoothHelper.getPairedDevices()

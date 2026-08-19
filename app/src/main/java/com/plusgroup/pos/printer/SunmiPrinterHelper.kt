@@ -310,6 +310,83 @@ class SunmiPrinterHelper(private val context: Context) {
         }.start()
     }
 
+    /**
+     * Enprime yon RAPÒ jenerik (Rapport partiel, Fin tirage, Fiche
+     * gagnant, Transactions, Fich elimine) nan menm fòma ak resi DVN
+     * Lotto a: antèt konpayi santre, kèk liy antèt agoch (Date/Vendeur/
+     * Pos...), yon liy `----`, epi chan "Etikèt: Valè" aliyen an 2 kolòn.
+     * `footerFields` opsyonèl ajoute yon dezyèm seksyon apre yon dezyèm
+     * liy `----` (itil pou Depot/Retrait/Balance nan F.TIRAGE).
+     */
+    fun printReportReceipt(
+        companyName: String,
+        branchCode: String,
+        phone: String,
+        reportTitle: String,
+        headerLines: List<Pair<String, String>>,
+        bodyFields: List<Pair<String, String>>,
+        footerFields: List<Pair<String, String>> = emptyList(),
+    ) {
+        val svc = woyouService ?: run {
+            Log.w(TAG, "Enprimant pa konekte — pa ka enprime")
+            return
+        }
+        Thread {
+            try {
+                svc.printerInit(null)
+                pause(120)
+                forceLatinCodepage(svc)
+                pause(60)
+
+                svc.setAlignment(1, null)
+                pause()
+                svc.printTextWithFont("$companyName\n", null, 28f, null)
+                pause()
+                if (branchCode.isNotBlank()) {
+                    svc.printTextWithFont("$branchCode\n", null, 24f, null)
+                    pause()
+                }
+                if (phone.isNotBlank()) {
+                    svc.printTextWithFont("Tel: $phone\n", null, 24f, null)
+                    pause()
+                }
+                svc.printTextWithFont("$reportTitle\n", null, 24f, null)
+                pause()
+                svc.lineWrap(1, null)
+                pause()
+
+                svc.setAlignment(0, null)
+                pause()
+                for ((label, value) in headerLines) {
+                    svc.printTextWithFont("$label: $value\n", null, 24f, null)
+                    pause()
+                }
+
+                svc.printTextWithFont("$DASHES\n", null, 24f, null)
+                pause()
+                for ((label, value) in bodyFields) {
+                    svc.printTextWithFont(twoColumnLine("$label:", value) + "\n", null, 24f, null)
+                    pause()
+                }
+
+                if (footerFields.isNotEmpty()) {
+                    svc.printTextWithFont("$DASHES\n", null, 24f, null)
+                    pause()
+                    for ((label, value) in footerFields) {
+                        svc.printTextWithFont(twoColumnLine("$label:", value) + "\n", null, 24f, null)
+                        pause()
+                    }
+                }
+
+                svc.lineWrap(12, null)
+                pause(300) // ase tan pou motè papye a fin fè tout avans lan anvan koupe
+                svc.cutpaper(null)
+            } catch (e: RemoteException) {
+                Log.e(TAG, "Echèk enprime rapò a", e)
+            }
+        }.start()
+    }
+
     // Aliyen tèks agoch ak yon valè adwat sou menm liy (menm lojik ak
     // BluetoothPrinterHelper, sipoze lajè ~32 karaktè).
     private fun twoColumnLine(left: String, right: String, width: Int = 32): String {

@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ATANSYON: fichye sa a se yon REKONSTRIKSYON — mwen pa t gen aksè a
-  activity_report.xml ORIJINAL ou a, se sèlman ID ki itilize nan
-  ReportActivity.kt mwen te ka konfime (btnBack, btnPartiel, btnFTirage,
-  btnFGagnant, btnTrasact, btnFEliminer, tvDate, btnSearch, tabBolet,
-  tabParamet, tvTirageValue, tvDateValue, tvFicheVenduValue, tvVenteValue,
-  tvCommissionValue). Yo TOUT prezan isit la ak menm non yo, ANSANM ak 3
-  nouvo eleman pou fonksyonalite "F.ELIMINER" + bouton print:
-  btnPrintReport, llPartialResult / llEliminatedResult (seksyon k ap
-  kache/parèt), llEliminatedContainer, tvEliminatedSummary.
-
-  Si stil (koulè, dimansyon) pa egzakteman jan app ou a te ye, ajiste yo
-  pou yo matche rès app la — sa pa afekte fonksyònman kòd Kotlin lan.
+  REKONSTRIKSYON dezyèm vèsyon — sipòte tout 4 rapò yo (PARTIEL, F.TIRAGE,
+  F.GAGNANT, TRASACT) ak F.ELIMINER, ak yon filtè PATAJE (De/A + Tiraj)
+  epi yon zòn rezilta ki chanje selon mòd aktif la.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -39,11 +30,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="12dp"
-            android:text="Rapò"
+            android:text="Rapport"
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!-- NOUVO: bouton print — enprime rapò ki afiche kounye a -->
         <ImageButton
             android:id="@+id/btnPrintReport"
             android:layout_width="40dp"
@@ -127,103 +117,148 @@
                     android:text="F.ELIMINER" />
             </LinearLayout>
 
-            <!-- ==================== DAT ==================== -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Date"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvDate"
+            <!-- ==================== FILTÈ PATAJE: DE / A / TIRAJ ==================== -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#808080"
-                android:textColor="@android:color/white"
-                android:padding="12dp"
-                android:layout_marginBottom="4dp" />
+                android:orientation="horizontal"
+                android:layout_marginBottom="4dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="4dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="De"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvDateFrom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#808080"
+                        android:textColor="@android:color/white"
+                        android:padding="12dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="A"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvDateTo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#808080"
+                        android:textColor="@android:color/white"
+                        android:padding="12dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTirageLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tirage"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
+
+            <Spinner
+                android:id="@+id/spinnerTirage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp" />
 
             <ImageButton
                 android:id="@+id/btnSearch"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:layout_gravity="end"
+                android:layout_gravity="center"
                 android:backgroundTint="#3B82F6"
                 android:contentDescription="Chèche"
                 android:src="@android:drawable/ic_menu_search" />
 
-            <!-- ==================== REZILTA — RAPÒ PASYÈL ==================== -->
+            <!-- ==================== REZILTA — PARTIEL / F.TIRAGE (rezime) ==================== -->
             <LinearLayout
-                android:id="@+id/llPartialResult"
+                android:id="@+id/llSummaryResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:src="@android:drawable/ic_menu_agenda" />
-
                 <TextView
+                    android:id="@+id/tvSummaryTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:gravity="center"
                     android:text="Rapport partiel"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/tvBalanceValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text=""
+                    android:textSize="26sp"
+                    android:textColor="#8B0000"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvBalanceLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Balance"
+                    android:textColor="#606060"
+                    android:visibility="gone"
                     android:layout_marginBottom="12dp" />
 
-                <TableLayout
+                <LinearLayout
+                    android:id="@+id/llSummaryRows"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TableRow>
-                        <TextView android:text="Tirage" android:textStyle="bold" android:padding="4dp" />
-                        <TextView android:id="@+id/tvTirageValue" android:padding="4dp" />
-                    </TableRow>
-                    <TableRow>
-                        <TextView android:text="Date" android:textStyle="bold" android:padding="4dp" />
-                        <TextView android:id="@+id/tvDateValue" android:padding="4dp" />
-                    </TableRow>
-                    <TableRow>
-                        <TextView android:text="Fiche vendu" android:textStyle="bold" android:padding="4dp" />
-                        <TextView android:id="@+id/tvFicheVenduValue" android:padding="4dp" />
-                    </TableRow>
-                    <TableRow>
-                        <TextView android:text="Vente" android:textStyle="bold" android:padding="4dp" />
-                        <TextView android:id="@+id/tvVenteValue" android:padding="4dp" />
-                    </TableRow>
-                    <TableRow>
-                        <TextView android:text="Commission" android:textStyle="bold" android:padding="4dp" />
-                        <TextView android:id="@+id/tvCommissionValue" android:padding="4dp" />
-                    </TableRow>
-                </TableLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
             </LinearLayout>
 
-            <!-- ==================== REZILTA — F.ELIMINER (NOUVO) ==================== -->
+            <!-- ==================== REZILTA — LIS (F.GAGNANT / TRASACT / F.ELIMINER) ==================== -->
             <LinearLayout
-                android:id="@+id/llEliminatedResult"
+                android:id="@+id/llListResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/tvListTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Fich Elimine"
+                    android:text=""
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="8dp" />
 
                 <TextView
-                    android:id="@+id/tvEliminatedSummary"
+                    android:id="@+id/tvListSummary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -233,7 +268,7 @@
                     android:layout_marginBottom="12dp" />
 
                 <LinearLayout
-                    android:id="@+id/llEliminatedContainer"
+                    android:id="@+id/llListContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
