@@ -57,6 +57,7 @@ class MyFichesActivity : AppCompatActivity() {
         binding.tvFin.setOnClickListener { pickDate(endDate) { binding.tvFin.text = dateFormat.format(endDate.time) } }
 
         binding.btnSearch.setOnClickListener { loadFiches() }
+        binding.swipeRefresh.setOnRefreshListener { loadFiches() }
 
         loadFiches()
     }
@@ -86,10 +87,14 @@ class MyFichesActivity : AppCompatActivity() {
             try {
                 val api = ApiClient.getService(applicationContext)
                 val res = api.getMyTickets(start, end)
-                val fiches = res.body()?.data ?: emptyList()
+                // Fich ki ANILE pa dwe parèt ditou nan "Mes fiches" — sèl
+                // kote yo dwe vizib se panèl admin (sekte "Elimine").
+                val fiches = (res.body()?.data ?: emptyList()).filter { it.status != "cancelled" }
                 renderFiches(fiches)
             } catch (e: Exception) {
                 Toast.makeText(this@MyFichesActivity, "Erè: ${e.message}", Toast.LENGTH_LONG).show()
+            } finally {
+                binding.swipeRefresh.isRefreshing = false
             }
         }
     }
@@ -108,7 +113,7 @@ class MyFichesActivity : AppCompatActivity() {
 
         for (fiche in fiches) {
             val mise = fiche.totalMise ?: 0.0
-            if (fiche.status != "cancelled") grandTotal += mise
+            grandTotal += mise
 
             val card = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL

@@ -102,17 +102,24 @@
             android:background="@android:color/white"
             android:orientation="vertical">
 
-            <ScrollView
+            <!-- SwipeRefreshLayout: rale ekran an desann pou rechaje lis la -->
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/llResultContainer"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp" />
-            </ScrollView>
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/llResultContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp" />
+                </ScrollView>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
