@@ -46,7 +46,7 @@
                     android:elevation="3dp"
                     android:contentDescription="Enprimant"
                     android:src="@android:drawable/ic_menu_gallery"
-                    app:tint="@android:color/white" />
+                    android:tint="@android:color/white" />
 
                 <ImageButton
                     android:id="@+id/btnMail"
@@ -60,7 +60,7 @@
                     android:elevation="3dp"
                     android:contentDescription="Notifikasyon"
                     android:src="@android:drawable/ic_dialog_email"
-                    app:tint="@android:color/white" />
+                    android:tint="@android:color/white" />
 
                 <ImageButton
                     android:id="@+id/btnMenu"
@@ -73,17 +73,20 @@
                     android:elevation="3dp"
                     android:contentDescription="Meni"
                     android:src="@android:drawable/ic_menu_more"
-                    app:tint="@android:color/white" />
+                    android:tint="@android:color/white" />
             </RelativeLayout>
 
-            <!-- Logo konpayi a -->
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:src="@mipmap/ic_launcher"
-                android:contentDescription="Logo konpayi a" />
+            <!-- Logo konpayi a — RETIRE tanporèman paske @mipmap/ic_launcher
+                 pa t egziste (erè "resource linking failed"). Si w gen yon
+                 fichye logo (.png/.webp), mete l nan res/drawable/ epi
+                 ranplase commentaire sa a ak:
+                 <ImageView
+                     android:layout_width="80dp"
+                     android:layout_height="80dp"
+                     android:layout_gravity="center"
+                     android:layout_marginTop="8dp"
+                     android:src="@drawable/NON_FICHYE_LOGO_OU"
+                     android:contentDescription="Logo konpayi a" /> -->
 
             <!-- Salut + rafrechi -->
             <LinearLayout
